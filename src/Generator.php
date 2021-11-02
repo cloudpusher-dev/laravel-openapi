@@ -7,6 +7,7 @@ use Illuminate\Support\Arr;
 use Vyuldashev\LaravelOpenApi\Builders\ComponentsBuilder;
 use Vyuldashev\LaravelOpenApi\Builders\InfoBuilder;
 use Vyuldashev\LaravelOpenApi\Builders\PathsBuilder;
+use Vyuldashev\LaravelOpenApi\Builders\SecurityBuilder;
 use Vyuldashev\LaravelOpenApi\Builders\ServersBuilder;
 use Vyuldashev\LaravelOpenApi\Builders\TagsBuilder;
 
@@ -16,12 +17,13 @@ class Generator
 
     public const COLLECTION_DEFAULT = 'default';
 
-    protected $config;
-    protected $infoBuilder;
-    protected $serversBuilder;
-    protected $tagsBuilder;
-    protected $pathsBuilder;
-    protected $componentsBuilder;
+    protected array $config;
+    protected InfoBuilder $infoBuilder;
+    protected ServersBuilder $serversBuilder;
+    protected TagsBuilder $tagsBuilder;
+    protected PathsBuilder $pathsBuilder;
+    protected ComponentsBuilder $componentsBuilder;
+    protected SecurityBuilder $securityBuilder;
 
     public function __construct(
         array $config,
@@ -29,7 +31,8 @@ class Generator
         ServersBuilder $serversBuilder,
         TagsBuilder $tagsBuilder,
         PathsBuilder $pathsBuilder,
-        ComponentsBuilder $componentsBuilder
+        ComponentsBuilder $componentsBuilder,
+        SecurityBuilder $securityBuilder
     ) {
         $this->config = $config;
         $this->infoBuilder = $infoBuilder;
@@ -37,6 +40,7 @@ class Generator
         $this->tagsBuilder = $tagsBuilder;
         $this->pathsBuilder = $pathsBuilder;
         $this->componentsBuilder = $componentsBuilder;
+        $this->securityBuilder = $securityBuilder;
     }
 
     public function generate(string $collection = self::COLLECTION_DEFAULT): OpenApi
@@ -47,7 +51,8 @@ class Generator
         $servers = $this->serversBuilder->build(Arr::get($this->config, 'collections.'.$collection.'.servers', []));
         $tags = $this->tagsBuilder->build(Arr::get($this->config, 'collections.'.$collection.'.tags', []));
         $paths = $this->pathsBuilder->build($collection, Arr::get($middlewares, 'paths', []));
-        $components = $this->componentsBuilder->build($collection);
+        $components = $this->componentsBuilder->build($collection, Arr::get($middlewares, 'components', []));
+        $security = $this->securityBuilder->build(Arr::get($this->config, 'collections.'.$collection.'.security', []));
 
         $openApi = OpenApi::create()
             ->openapi(OpenApi::OPENAPI_3_0_2)
@@ -55,7 +60,7 @@ class Generator
             ->servers(...$servers)
             ->paths(...$paths)
             ->components($components)
-            ->security(...Arr::get($this->config, 'collections.'.$collection.'.security', []))
+            ->security(...$security)
             ->tags(...$tags);
 
         return $openApi;

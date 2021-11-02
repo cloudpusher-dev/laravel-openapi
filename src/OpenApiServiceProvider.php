@@ -15,6 +15,7 @@ use Vyuldashev\LaravelOpenApi\Builders\Components\SecuritySchemesBuilder;
 use Vyuldashev\LaravelOpenApi\Builders\ComponentsBuilder;
 use Vyuldashev\LaravelOpenApi\Builders\InfoBuilder;
 use Vyuldashev\LaravelOpenApi\Builders\PathsBuilder;
+use Vyuldashev\LaravelOpenApi\Builders\SecurityBuilder;
 use Vyuldashev\LaravelOpenApi\Builders\ServersBuilder;
 use Vyuldashev\LaravelOpenApi\Builders\TagsBuilder;
 
@@ -59,7 +60,8 @@ class OpenApiServiceProvider extends ServiceProvider
                 $app[ServersBuilder::class],
                 $app[TagsBuilder::class],
                 $app[PathsBuilder::class],
-                $app[ComponentsBuilder::class]
+                $app[ComponentsBuilder::class],
+                $app[SecurityBuilder::class]
             );
         });
 

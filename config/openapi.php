@@ -28,7 +28,10 @@ return [
             ],
 
             'security' => [
-                // GoldSpecDigital\ObjectOrientedOAS\Objects\SecurityRequirement::create()->securityScheme('JWT'),
+                // [
+                //    'securityScheme' => 'OAuth2',
+                //    'scopes' => [ 'read', 'write' ],
+                // ],
             ],
 
             // Route for exposing specification.
